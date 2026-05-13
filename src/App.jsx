@@ -24,39 +24,43 @@ import confetti from "canvas-confetti";
 import { Lrc } from "react-lrc";
 import { loveData } from "./data/content";
 
-// --- 1. LLUVIA DE CORAZONES (DISTRIBUCIÓN TOTAL) ---
+// --- 1. LLUVIA DE CORAZONES (EFECTO CATARATA TOTAL) ---
 const LluviaDeCorazonesMasiva = () => (
-  <div className="absolute inset-0 pointer-events-none overflow-hidden z-20">
-    {[...Array(30)].map((_, i) => (
-      <motion.div
-        key={`heart-${i}`}
-        className="absolute text-2xl"
-        initial={{
-          y: -100,
-          x: `${Math.random() * 100}%`,
-          opacity: 0,
-          rotate: 0,
-        }}
-        animate={{
-          y: "110vh",
-          x: [`${Math.random() * 100}%`, `${Math.random() * 100}%`],
-          opacity: [0, 1, 1, 0],
-          rotate: 360,
-        }}
-        transition={{
-          duration: Math.random() * 4 + 3,
-          repeat: Infinity,
-          ease: "linear",
-          delay: Math.random() * 5,
-        }}
-      >
-        ❤️
-      </motion.div>
-    ))}
+  <div className="absolute inset-0 pointer-events-none overflow-hidden z-20 w-full">
+    {[...Array(35)].map((_, i) => {
+      const startX = Math.random() * 100; // porcentaje del ancho del viewport
+      const startY = Math.floor(Math.random() * -200); // altura inicial aleatoria
+      const size = `${Math.floor(Math.random() * 20 + 16)}px`; // tamaño aleatorio
+      const colors = ["❤️", "💜", "💙", "💖"];
+      const heart = colors[Math.floor(Math.random() * colors.length)];
+
+      return (
+        <motion.div
+          key={`heart-${i}`}
+          className="absolute"
+          style={{ fontSize: size }}
+          initial={{ y: startY, x: `${startX}vw`, opacity: 0 }}
+          animate={{
+            y: "110vh",
+            x: [`${startX}vw`, `${startX + (Math.random() * 20 - 10)}vw`],
+            opacity: [0, 1, 1, 0],
+            rotate: 360,
+          }}
+          transition={{
+            duration: Math.random() * 3 + 3,
+            repeat: Infinity,
+            ease: "linear",
+            delay: Math.random() * 5,
+          }}
+        >
+          {heart}
+        </motion.div>
+      );
+    })}
   </div>
 );
 
-// --- 2. TARJETAS MISTERIO 1 (POLAROID PREMIUM) ---
+// --- 2. TARJETAS MISTERIO 1 (ESTILO POLAROID PREMIUM) ---
 const SwipeCard = ({ text, image, index, total, onSwipe }) => {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-150, 150], [-20, 20]);
@@ -74,26 +78,21 @@ const SwipeCard = ({ text, image, index, total, onSwipe }) => {
       }}
       drag="x"
       dragConstraints={{ left: 0, right: 0 }}
-      whileDrag={{ scale: 1.05, zIndex: 100 }}
+      whileDrag={{ scale: 1.05 }}
       onDragEnd={(_, info) => {
         if (Math.abs(info.offset.x) > 80) onSwipe();
       }}
-      className="absolute inset-0 w-full h-[380px] bg-white rounded-sm shadow-[0_20px_40px_rgba(0,0,0,0.15)] p-4 flex flex-col items-center border-[12px] border-white cursor-grab active:cursor-grabbing ring-1 ring-black/5"
+      className="absolute inset-0 w-full h-[380px] bg-white shadow-[0_20px_40px_rgba(0,0,0,0.15)] p-4 flex flex-col items-center border-[12px] border-white cursor-grab active:cursor-grabbing shrink-0"
     >
-      <div className="w-full h-56 bg-slate-100 rounded-sm overflow-hidden mb-4 shadow-inner relative">
-        <img
-          src={image}
-          alt="Templo"
-          className="w-full h-full object-cover transition-transform duration-700"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+      <div className="w-full h-56 bg-slate-100 overflow-hidden mb-4 shadow-inner relative">
+        <img src={image} alt="Templo" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-black/5" />
       </div>
-      <p className="text-sm font-serif italic text-slate-700 text-center leading-tight px-1 drop-shadow-sm">
+      <p className="text-sm font-serif italic text-slate-700 text-center leading-tight flex-1 flex items-center px-1">
         "{text}"
       </p>
-      <div className="absolute bottom-2 flex items-center gap-2 text-[7px] text-slate-400 font-bold uppercase tracking-tighter">
-        <MoveHorizontal size={10} className="animate-pulse" /> Desliza para
-        continuar
+      <div className="absolute bottom-2 flex items-center gap-2 text-[7px] text-slate-400 font-bold uppercase tracking-widest">
+        Dato {index + 1} de {total}
       </div>
     </motion.div>
   );
@@ -113,7 +112,6 @@ export default function App() {
   const [m2Reveal, setM2Reveal] = useState(0);
   const audioRef = useRef(null);
 
-  // Textos para las cards (puedes cambiarlos)
   const misterio1Cards = [
     {
       text: "Por ser mi refugio en los días difíciles.",
@@ -161,11 +159,8 @@ export default function App() {
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
-  const handleNoTouch = () => {
-    setNoButtonPos({
-      x: Math.random() * 140 - 70,
-      y: Math.random() * 100 - 50,
-    });
+  const handleNoClick = () => {
+    setNoButtonPos({ x: Math.random() * 120 - 60, y: Math.random() * 80 - 40 });
   };
 
   const closeGift = () => {
@@ -182,17 +177,11 @@ export default function App() {
     setM2Reveal(0);
   };
 
-  const togglePlay = () => {
-    if (!audioRef.current) return;
-    isPlaying ? audioRef.current.pause() : audioRef.current.play();
-    setIsPlaying(!isPlaying);
-  };
-
   useEffect(() => {
     let interval;
     if (isPlaying && activeGift === "birthday" && !songFinished) {
       interval = setInterval(() => {
-        setCoverIndex((prev) => (prev + 1) % 10); // Loop de 1 a 10
+        setCoverIndex((prev) => (prev + 1) % 10);
       }, 3000);
     }
     return () => clearInterval(interval);
@@ -211,7 +200,7 @@ export default function App() {
           <div className="w-2 h-2 rounded-full bg-[#FFBD2E]" />
           <div className="w-2 h-2 rounded-full bg-[#27C93F]" />
         </div>
-        <div className="flex-1 text-center font-mono text-[7px] text-slate-400 font-bold uppercase tracking-widest px-2">
+        <div className="flex-1 text-center font-mono text-[7px] text-slate-400 font-bold uppercase tracking-widest truncate px-2">
           {title}
         </div>
       </div>
@@ -245,21 +234,21 @@ export default function App() {
               >
                 🎁
               </motion.div>
-              <h2 className="text-2xl font-serif font-bold text-slate-800 mb-8 italic px-2 leading-relaxed">
-                Hola princesa, ¿me permites mostrarte algo?
+              <h2 className="text-2xl font-serif font-bold text-slate-800 mb-8 italic">
+                ¿Me permites mostrarte algo?
               </h2>
               <div className="flex gap-4 relative">
                 <button
                   onClick={() => setView("selection")}
-                  className="px-8 py-3 bg-rose-500 text-white font-bold rounded-xl shadow-lg active:scale-95 text-[10px] uppercase tracking-widest"
+                  className="px-8 py-3 bg-rose-500 text-white font-bold rounded-xl shadow-lg active:scale-95 text-[10px] uppercase"
                 >
                   Sí, acepto
                 </button>
                 <motion.button
                   animate={{ x: noButtonPos.x, y: noButtonPos.y }}
-                  onMouseEnter={handleNoTouch}
-                  onTouchStart={handleNoTouch}
-                  className="px-8 py-3 bg-slate-200 text-slate-400 font-bold rounded-xl text-[10px] uppercase tracking-widest absolute left-[110px]"
+                  onMouseEnter={handleNoClick}
+                  onTouchStart={handleNoClick}
+                  className="px-8 py-3 bg-slate-200 text-slate-400 font-bold rounded-xl text-[10px] uppercase absolute left-[110px]"
                 >
                   No
                 </motion.button>
@@ -298,8 +287,8 @@ export default function App() {
                     <p className="font-bold text-slate-700 text-xs">
                       Misterio #{idx + 1}
                     </p>
-                    <p className="text-[7px] text-rose-300 font-black uppercase">
-                      Abrir archivo
+                    <p className="text-[7px] text-rose-300 font-black uppercase tracking-widest">
+                      Abrir
                     </p>
                   </div>
                 </motion.button>
@@ -318,16 +307,16 @@ export default function App() {
             </button>
 
             {activeGift === "anniversary" && (
-              <div className="flex-1 flex flex-col bg-white overflow-hidden h-full">
+              <div className="flex-1 flex flex-col bg-white h-full overflow-hidden">
                 <div className="pt-14 pb-2 px-6 text-center shrink-0">
-                  <h2 className="text-xl font-serif font-bold text-rose-500 italic">
+                  <h2 className="text-lg font-serif font-bold text-rose-500 italic">
                     Razones de mi Amor
                   </h2>
-                  <p className="text-[7px] font-black text-rose-300 uppercase tracking-widest">
+                  <p className="text-[7px] text-rose-300 uppercase tracking-widest">
                     Desliza las fotos
                   </p>
                 </div>
-                <div className="flex-1 relative px-10 py-6 mb-10">
+                <div className="flex-1 relative px-10 py-6 mb-10 shrink-0">
                   <AnimatePresence>
                     {misterio1Cards.map(
                       (card, i) =>
@@ -350,8 +339,8 @@ export default function App() {
                       className="flex flex-col items-center justify-center h-full text-center px-4"
                     >
                       <Sparkles className="w-8 h-8 text-amber-400 mb-2" />
-                      <p className="font-serif italic text-slate-500 text-sm italic">
-                        Y muchas razones más...
+                      <p className="font-serif italic text-slate-500 text-sm">
+                        Y mil razones más...
                       </p>
                     </motion.div>
                   )}
@@ -376,7 +365,7 @@ export default function App() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="w-full max-w-[180px] mb-8 relative">
+                  <div className="w-full max-w-[180px] mb-8 relative shrink-0">
                     <AnimatePresence>
                       {m2Reveal < 10 && (
                         <motion.p
@@ -406,7 +395,7 @@ export default function App() {
                   </div>
                   <motion.p
                     style={{ opacity: m2Reveal / 100 }}
-                    className="text-white font-serif italic text-xs leading-relaxed text-center italic"
+                    className="text-white font-serif italic text-xs leading-relaxed text-center px-2"
                   >
                     "{loveData.eternityMessage}"
                   </motion.p>
@@ -418,7 +407,7 @@ export default function App() {
               <div className="flex-1 flex flex-col bg-gradient-to-b from-rose-200 to-rose-50 h-full overflow-hidden relative">
                 {!showFinalSurprise ? (
                   <div className="flex-1 flex flex-col h-full pt-12 px-6">
-                    <div className="flex-1 flex flex-col items-center justify-center">
+                    <div className="flex-1 flex flex-col items-center justify-center max-h-[65%]">
                       <motion.div
                         animate={{
                           rotate: isPlaying ? 360 : 0,
@@ -432,10 +421,9 @@ export default function App() {
                           },
                           scale: { duration: 0.5 },
                         }}
-                        className="w-32 h-32 rounded-full shadow-2xl border-4 border-white overflow-hidden relative mb-4 shrink-0"
+                        className="w-32 h-32 rounded-full shadow-xl border-4 border-white overflow-hidden relative mb-4 shrink-0"
                       >
                         <AnimatePresence mode="wait">
-                          {/* CORRECCIÓN: Imágenes .jpg para el disco */}
                           <motion.img
                             key={coverIndex}
                             src={`/images/${coverIndex + 1}.jpg`}
@@ -446,7 +434,7 @@ export default function App() {
                           />
                         </AnimatePresence>
                       </motion.div>
-                      <div className="text-center mb-2 shrink-0">
+                      <div className="text-center mb-2 shrink-0 px-2">
                         <h3 className="text-base font-bold text-slate-800 leading-tight">
                           {loveData.musicPlayer.songName}
                         </h3>
@@ -454,17 +442,15 @@ export default function App() {
                           {loveData.musicPlayer.artist}
                         </p>
                       </div>
-
                       <motion.div
                         animate={{ opacity: [1, 0, 1] }}
                         transition={{ repeat: Infinity, duration: 1.5 }}
-                        className="mb-2"
+                        className="mb-2 shrink-0"
                       >
                         <p className="text-[8px] font-bold text-rose-500 tracking-[0.2em] uppercase">
                           ✨ Escucha hasta el final ✨
                         </p>
                       </motion.div>
-
                       <div className="w-full mb-4 shrink-0 px-4">
                         <div
                           onClick={(e) => {
@@ -487,7 +473,7 @@ export default function App() {
                           <span>{formatTime(duration)}</span>
                         </div>
                       </div>
-                      <div className="flex justify-center items-center gap-6 mb-2">
+                      <div className="flex justify-center items-center gap-6 mb-2 shrink-0">
                         <button
                           onClick={() => (audioRef.current.currentTime -= 10)}
                           className="text-slate-400 active:scale-75"
@@ -495,7 +481,11 @@ export default function App() {
                           <SkipBack size={18} />
                         </button>
                         <button
-                          onClick={togglePlay}
+                          onClick={() =>
+                            isPlaying
+                              ? audioRef.current.pause()
+                              : audioRef.current.play()
+                          }
                           className="w-12 h-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center shadow-lg active:scale-90"
                         >
                           {isPlaying ? (
@@ -512,7 +502,7 @@ export default function App() {
                         </button>
                       </div>
                     </div>
-                    <div className="h-28 w-full bg-white/40 backdrop-blur-sm rounded-[1.5rem] p-4 border border-white/50 overflow-hidden relative shrink-0">
+                    <div className="h-28 w-full bg-white/40 backdrop-blur-sm rounded-[1.5rem] p-4 border border-white/50 overflow-hidden relative shrink-0 mb-4">
                       <Lrc
                         lrc={loveData.musicPlayer.lrcString}
                         currentMillisecond={currentTime * 1000}
@@ -560,10 +550,11 @@ export default function App() {
                     className="absolute inset-0 bg-[#FDFBF7] z-[70] flex flex-col overflow-y-auto"
                   >
                     <LluviaDeCorazonesMasiva />
+                    {/* AVISO SUBIDO A bottom-20 */}
                     <motion.div
                       animate={{ opacity: [1, 0, 1] }}
                       transition={{ repeat: Infinity, duration: 2 }}
-                      className="fixed bottom-6 left-0 right-0 flex flex-col items-center gap-1 z-[80] pointer-events-none"
+                      className="fixed bottom-20 left-0 right-0 flex flex-col items-center gap-1 z-[80] pointer-events-none"
                     >
                       <span className="text-[10px] text-rose-500 font-black uppercase tracking-widest drop-shadow-sm">
                         Desliza preciosa
@@ -573,7 +564,7 @@ export default function App() {
                         className="text-rose-500 animate-bounce"
                       />
                     </motion.div>
-                    <div className="pt-16 px-6 pb-28">
+                    <div className="pt-16 px-6 pb-28 relative z-10">
                       <motion.div
                         initial="hidden"
                         animate="visible"
@@ -587,20 +578,18 @@ export default function App() {
                             hidden: { opacity: 0, y: 10 },
                             visible: { opacity: 1, y: 0 },
                           }}
-                          className="text-5xl font-serif italic text-rose-500 mb-8 font-bold text-center"
+                          className="text-5xl font-serif italic text-rose-500 mb-8 font-bold text-center leading-tight"
                         >
                           Tú.
                         </motion.h2>
-
                         <div className="grid grid-cols-2 gap-3 w-full mb-10">
-                          {/* CORRECCIÓN: Carga imágenes .jpg de la 1 a la 10 */}
                           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
                             <motion.div
                               key={n}
                               initial={{ opacity: 0, scale: 0.8 }}
                               whileInView={{ opacity: 1, scale: 1 }}
                               viewport={{ once: true }}
-                              className="aspect-[3/4] rounded-xl overflow-hidden border-2 border-white shadow-md bg-white"
+                              className="aspect-[3/4] rounded-xl overflow-hidden border-2 border-white shadow-md bg-white shrink-0"
                             >
                               <img
                                 src={`/images/${n}.jpg`}
@@ -610,9 +599,8 @@ export default function App() {
                             </motion.div>
                           ))}
                         </div>
-
                         <div className="bg-white p-6 rounded-[2rem] shadow-xl border border-rose-50 text-center mb-8 w-full font-serif italic text-xs text-slate-600 leading-relaxed px-4 italic">
-                          "Hoy celebro tu vida, mi reina. Eres mi mayor
+                          "Hoy celebro tu vida, princesa. Eres mi mayor
                           bendición hoy y siempre. ¡Feliz cumpleaños!"
                         </div>
                         <p className="text-[8px] font-black text-slate-300 uppercase tracking-[0.5em] pb-6 italic">
