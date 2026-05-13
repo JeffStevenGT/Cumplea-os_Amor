@@ -1,7 +1,7 @@
 export const loveData = {
-  name: "Princesa",
+  name: "Mi reina",
   monthsTogether: 18,
-  birthdayAge: 21,
+  birthdayAge: 29,
   jesusImage: "/images/Jesucristo.jpeg",
 
   anniversaryTitle: "Nuestra Historia",
@@ -10,7 +10,7 @@ export const loveData = {
 
   eternityTitle: "Mi Mayor Meta",
   eternityMessage:
-    "Contigo he aprendido que el amor verdadero tiene a Cristo como su centro. Mi sueño más grande es llegar al Templo de Su mano, arrodillarnos en el altar y sellarnos por el tiempo y por toda la eternidad.",
+    "Contigo he aprendido que el amor verdadero tiene a Cristo como su centro. Mi sueño más grande es llegar al Templo de tu mano, arrodillarnos en el altar y sellarnos por el tiempo y por toda la eternidad.",
 
   musicPlayer: {
     audioSrc: "/music/cancion.mp3",
