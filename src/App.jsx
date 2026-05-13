@@ -31,7 +31,7 @@ const LluviaDeCorazonesMasiva = () => (
       const startX = Math.random() * 100; // porcentaje del ancho del viewport
       const startY = Math.floor(Math.random() * -200); // altura inicial aleatoria
       const size = `${Math.floor(Math.random() * 20 + 16)}px`; // tamaño aleatorio
-      const colors = ["❤️", "💜", "💙", "💖"];
+      const colors = ["❤️", "💜", "💙", "💖", "🤍", "💛", "💚", "🧡", "❤️‍🔥"];
       const heart = colors[Math.floor(Math.random() * colors.length)];
 
       return (
