@@ -177,6 +177,16 @@ export default function App() {
     setM2Reveal(0);
   };
 
+  const togglePlay = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
   useEffect(() => {
     let interval;
     if (isPlaying && activeGift === "birthday" && !songFinished) {
@@ -481,11 +491,7 @@ export default function App() {
                           <SkipBack size={18} />
                         </button>
                         <button
-                          onClick={() =>
-                            isPlaying
-                              ? audioRef.current.pause()
-                              : audioRef.current.play()
-                          }
+                          onClick={togglePlay}
                           className="w-12 h-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center shadow-lg active:scale-90"
                         >
                           {isPlaying ? (
@@ -600,8 +606,9 @@ export default function App() {
                           ))}
                         </div>
                         <div className="bg-white p-6 rounded-[2rem] shadow-xl border border-rose-50 text-center mb-8 w-full font-serif italic text-xs text-slate-600 leading-relaxed px-4 italic">
-                          "Hoy celebro tu vida, princesa. Eres mi mayor
-                          bendición hoy y siempre. ¡Feliz cumpleaños!"
+                          "Hoy celebro tu vida, mi reina. Eres mi mayor
+                          bendición hoy y siempre. ¡Feliz cumpleaños! ¡Feliz
+                          aniversario!"
                         </div>
                         <p className="text-[8px] font-black text-slate-300 uppercase tracking-[0.5em] pb-6 italic">
                           Eternamente nosotros
