@@ -126,7 +126,7 @@ export default function App() {
       img: "/images/templo3.jpeg",
     },
     {
-      text: "Por esos 18 meses llenos de bendiciones.",
+      text: "Por esos 20 meses llenos de bendiciones.",
       img: "/images/templo4.jpeg",
     },
     {

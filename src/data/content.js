@@ -1,6 +1,6 @@
 export const loveData = {
   name: "Mi reina",
-  monthsTogether: 18,
+  monthsTogether: 20,
   birthdayAge: 29,
   jesusImage: "/images/Jesucristo.jpeg",
 
