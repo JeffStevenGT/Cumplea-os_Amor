@@ -1,0 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap");
+@import "tailwindcss";
+
+@layer utilities {
+  .font-serif {
+    font-family: "Playfair Display", serif;
+  }
+  .font-sans {
+    font-family: "Inter", sans-serif;
+  }
+}
+
+body {
+  margin: 0;
+  background-color: #1c1917; /* Fondo oscuro elegante para escritorio */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ocultar scrollbar para un look más limpio */
+::-webkit-scrollbar {
+  display: none;
+}
